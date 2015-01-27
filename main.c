@@ -1,26 +1,21 @@
-#include "stdio.h"
-
-#include "rpi_pmu.h"
 #include "cpu_test.h"
-
-
-void pmcr_init()
-{
-	unsigned pmcr_result;
-	pmcr_result = ARMV6_PMCR_ENABLE |
-			ARMV6_PMCR_CCOUNT_RESET |
-			ARMV6_PMCR_CCOUNT_DIV |
-			ARMV6_PMCR_CTR01_RESET;
-	pmcr_write(pmcr_result);
-}
 
 int main()
 {
+	unsigned task_creation_sum = 0; 
+	int i;
+
 	pmcr_init();
 
-	unsigned overhead_result = overhead_test();
+	unsigned overhead_result = get_overhead();
+	
+	printf("Reading overhead time is : %d\n", overhead_result);
+	
+	for(i=0; i<TASK_CREATION_NUM ; ++i) {
+		task_creation_sum += cpu_task_creation(overhead_result);
+	}
 
-	printf("%d\n", overhead_result);
+	printf("process creation time : %d\n",task_creation_sum/TASK_CREATION_NUM);
 
 	return 0;
 }

@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall -std=c++0x -g
 LDFLAGS=#-lstdc++
-SOURCES=overhead.c main.c
+SOURCES=rpi_pmu.c cpu_task_creation.c main.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=run
 
