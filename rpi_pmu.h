@@ -1,3 +1,6 @@
+#ifndef RPI_PMU_H_
+#define RPI_PMU_H_
+
 #define ARMV6_EVENT_ICACHE_MISS     0x0
 #define ARMV6_EVENT_IBUF_STALL      0x1
 #define ARMV6_EVENT_DDEP_STALL      0x2
@@ -60,15 +63,4 @@ static inline unsigned pmcr_read(){
 	return val;
 }
 
-void pmcr_init()
-{
-	//unsigned pmcr_result;// = pmcr_read();
-	//pmcr_result = pmcr_write(ARMV6_PMCR_ENABLE |
-	pmcr_write(ARMV6_PMCR_ENABLE |
-			ARMV6_PMCR_CCOUNT_RESET |
-			ARMV6_PMCR_CCOUNT_DIV |
-			ARMV6_PMCR_CTR01_RESET
-			) ;
-//	pmcr_result = pmcr_result | ARMV6_PMCR_COUNT0_OVERFLOW ;
-//	pmcr_write(pmcr_result);
-}
+#endif

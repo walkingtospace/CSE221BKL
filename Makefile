@@ -1,15 +1,15 @@
 CC=g++
 CFLAGS=-c -Wall -std=c++0x -g
 LDFLAGS=#-lstdc++
-SOURCES=
-OBJECTS=$(SOURCES:.cpp=.o)
+SOURCES=overhead.c main.c
+OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=run
 
-#all: $(SOURCES) $(EXECUTABLE)
-#	./run 
+all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ 
+#	$(CC) $(LDFLAGS) $(OBJECTS) -o $(EXECUTABLE) 
 	
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
