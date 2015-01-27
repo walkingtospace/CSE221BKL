@@ -2,20 +2,24 @@
 
 int main()
 {
-	unsigned task_creation_sum = 0; 
 	int i;
+	unsigned task_creation_result = 0; 
+	float *proccall_test_result;
 
 	pmcr_init();
 
-	unsigned overhead_result = get_overhead();
+	unsigned ccnt_overhead = get_overhead();
 	
-	printf("Reading overhead time is : %d\n", overhead_result);
+	printf("Reading overhead time is : %d\n", ccnt_overhead);
 	
-	for(i=0; i<TASK_CREATION_NUM ; ++i) {
-		task_creation_sum += cpu_task_creation(overhead_result);
+	proccall_test_result = cpu_proccall_overhead(ccnt_overhead);
+	for(i=0;i<=PROCCALL_ARG_NUM;i++){
+		printf("procedure call with %d arguments: %f\n", i, proccall_test_result[i]);
 	}
 
-	printf("process creation time : %d\n",task_creation_sum/TASK_CREATION_NUM);
+	task_creation_result += cpu_task_creation(ccnt_overhead);
+	printf("process creation time : %d\n",task_creation_result);
+
 
 	return 0;
 }

@@ -3,18 +3,27 @@
 unsigned cpu_task_creation(unsigned overhead) {
 	unsigned start, end;
 	pid_t childPID;
+	int i;
+	unsigned total = 0;
 
-	start = ccnt_read();
-	childPID = fork();
-	end = ccnt_read();
-	kill(childPID, SIGKILL); //kill child\
+	for(i=0;i<TASK_CREATION_NUM;i++){
 
-	if(childPID >= 0) {
-		//fork success 
-	} else {
-		printf("Fork failed. suck.\n");
-	}	
-	
-	return ((end-start)-overhead); 
+		start = ccnt_read();
+		childPID = fork();
+		end = ccnt_read();
+		kill(childPID, SIGKILL); //kill child\
+
+		//Shouldn't it be ">0" ?)
+		if(childPID >= 0) {
+			//fork success 
+		} else {
+			printf("Fork failed. suck.\n");
+		}	
+
+		total += end - start - overhead;
+	}
+	total /= TASK_CREATION_NUM;
+
+	return total;
 }
 
