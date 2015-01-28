@@ -1,4 +1,4 @@
-#include "./cpu_test.h"
+#include "cpu_test.h"
 #include "stdio.h"
 
 

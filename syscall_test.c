@@ -18,3 +18,4 @@ data_t cpu_syscall_overhead(data_t ccnt_overhead){
 
 	return total/SYSCALL_TEST_NUM;
 }
+
