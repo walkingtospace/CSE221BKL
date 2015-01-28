@@ -1,6 +1,9 @@
 #include "cpu_test.h"
 #include "stdio.h"
 
+static inline void pmcr_write(unsigned long val){
+	asm volatile("mcr   p15, 0, %0, c15, c12, 0" : : "r"(val));
+}
 
 void pmcr_init(){
 	unsigned pmcr_result;
@@ -29,5 +32,18 @@ data_t get_overhead(){
 #endif
 
 	return (total/OVERHEAD_TEST_NUM);
+}
+
+inline unsigned ccnt_read()
+{
+	unsigned cc;
+	asm volatile ("mrc p15, 0, %0, c15, c12, 1" : "=r" (cc));
+	return cc;
+}
+
+inline unsigned pmcr_read(){
+	unsigned val;
+	asm volatile("mrc   p15, 0, %0, c15, c12, 0" : "=r"(val));
+	return val;
 }
 

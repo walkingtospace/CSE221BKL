@@ -30,7 +30,6 @@ int main()
 		printf("\n");
 #endif
 	}
-
 	for(i=0;i<=PROCCALL_ARG_NUM;i++){
 		printf("procedure call with %d arguments: %f\n", i, proccall_test_temp[i]/(TRIALS * CALLS));
 	}

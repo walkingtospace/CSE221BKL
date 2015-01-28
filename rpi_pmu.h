@@ -46,20 +46,4 @@
 	(ARMV6_PMCR_COUNT0_OVERFLOW | ARMV6_PMCR_COUNT1_OVERFLOW | \
 	 ARMV6_PMCR_CCOUNT_OVERFLOW)
 
-inline void pmcr_write(unsigned long val){
-	asm volatile("mcr   p15, 0, %0, c15, c12, 0" : : "r"(val));
-}
-inline unsigned ccnt_read()
-{
-	unsigned cc;
-	asm volatile ("mrc p15, 0, %0, c15, c12, 1" : "=r" (cc));
-	return cc;
-}
-
-inline unsigned pmcr_read(){
-	unsigned val;
-	asm volatile("mrc   p15, 0, %0, c15, c12, 0" : "=r"(val));
-	return val;
-}
-
 #endif
