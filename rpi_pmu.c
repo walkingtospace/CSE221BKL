@@ -1,4 +1,5 @@
 #include "./cpu_test.h"
+#include "stdio.h"
 
 static inline void pmcr_write(unsigned long val){
 	asm volatile("mcr   p15, 0, %0, c15, c12, 0" : : "r"(val));
@@ -13,16 +14,22 @@ void pmcr_init(){
 	pmcr_write(pmcr_result);
 }
 
-unsigned get_overhead(){
+data_t get_overhead(){
 	int i=0;
 	unsigned start, end;
-	unsigned total = 0;
+	data_t total = 0;
 
 	for(i=0; i<OVERHEAD_TEST_NUM; i++){
 		start = ccnt_read();
 		end = ccnt_read();
-		total += end - start;
+		total += (data_t)(end - start);
+#ifdef DEBUG
+		printf("%dth measurement overhead: %d\n",i, end - start);
+#endif
 	}
+#ifdef DEBUG
+	printf("Avg measurement overhead: %f\n", (float)total/OVERHEAD_TEST_NUM);
+#endif
 
 	return (total/OVERHEAD_TEST_NUM);
 }

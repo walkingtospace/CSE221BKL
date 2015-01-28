@@ -1,10 +1,10 @@
 #include "./cpu_test.h"
 
-unsigned cpu_task_creation(unsigned overhead) {
-	unsigned start, end;
+data_t cpu_task_creation(data_t overhead) {
+	data_t start, end;
 	pid_t childPID;
 	int i;
-	unsigned total = 0;
+	data_t total = 0;
 
 	for(i=0;i<TASK_CREATION_NUM;i++){
 
@@ -20,7 +20,7 @@ unsigned cpu_task_creation(unsigned overhead) {
 			printf("Fork failed. suck.\n");
 		}	
 
-		total += end - start - overhead;
+		total += (data_t)(end - start - overhead);
 	}
 	total /= TASK_CREATION_NUM;
 

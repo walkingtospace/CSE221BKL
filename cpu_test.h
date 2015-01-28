@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#include "parameter.h"
+
 #include "./rpi_pmu.h"
 
 //debugging variables
@@ -15,22 +17,23 @@
 
 //constants
 #define OVERHEAD_TEST_NUM 1000
-#define PROCCALL_TEST_NUM 10
+#define PROCCALL_TEST_NUM 1
 #define TASK_CREATION_NUM 10
+#define SYSCALL_TEST_NUM 1000
+
 #define PROCCALL_ARG_NUM 7
 
 //pmu functions
-unsigned get_overhead();
+data_t get_overhead();
 void pmcr_init();
 inline unsigned ccnt_read();
 inline unsigned pmcr_read();
 
-
 //measurement functions
-unsigned cpu_task_creation(unsigned);
-float* cpu_proccall_overhead(unsigned ccnt_overhead);
+data_t cpu_task_creation(data_t);
+data_t* cpu_proccall_overhead(data_t ccnt_overhead);
+data_t cpu_syscall_overhead(data_t ccnt_overhead);
 /*
-void cpu_systemcall_overhead();
 void cpu_context_switching();
 void memory_RAM_access();
 void memory_RAM_bandwidth();
