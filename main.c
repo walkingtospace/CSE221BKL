@@ -12,11 +12,11 @@ int main()
 	//Measurement overhead
 	data_t ccnt_overhead;
 	ccnt_overhead = get_overhead();
-	printf("Reading overhead time is : %d\n", ccnt_overhead);
+	printf("Reading overhead time is : %f\n", ccnt_overhead);
 	
 	//Procedure call test
 	data_t proccall_test_temp[PROCCALL_ARG_NUM+1];
-	for(i=0;i<1000;i++){
+	for(i=0;i<10000;i++){
 		proccall_test_result = cpu_proccall_overhead(ccnt_overhead);
 		for(j=0;j<=PROCCALL_ARG_NUM;j++){
 			proccall_test_temp[j] += proccall_test_result[j];
@@ -29,7 +29,7 @@ int main()
 #endif
 	}
 	for(i=0;i<=PROCCALL_ARG_NUM;i++){
-		printf("procedure call with %d arguments: %f\n", i, proccall_test_temp[i]/1000);
+		printf("procedure call with %d arguments: %f\n", i, proccall_test_temp[i]/10000);
 	}
 
 	//System call test
