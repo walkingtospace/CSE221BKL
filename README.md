@@ -14,5 +14,3 @@ make
 
 ./run
 =======
-
-Created Kevin Branch.
