@@ -1,12 +1,15 @@
 #include "cpu_test.h"
+#include "math.h"
 
 void rambw_read_test(int iteration, data_t ccnt_overhead) {
 	const int SIZE = 10*1024*1024; //10MB
 	const int STRIDE = 4096;
+	float mean = 0, std = 0, min = 99999999, max = 0, median = 0;
+	float result[iteration/1000];	
 
 	// Set up array
 	int* v = (int*)malloc(sizeof(int)*SIZE);
-	int i;
+	int i, cnt = 0;
 
 	for (i = STRIDE; i < SIZE; i += STRIDE) {
 		v[i] = (int)&v[i-STRIDE];
@@ -24,9 +27,8 @@ void rambw_read_test(int iteration, data_t ccnt_overhead) {
 	data_t t0, t1;
 	float sum_t = 0;
 	int n = 0;
-
-	const int step = 1000;
 	int tmp;
+	const int step = 1000;
 	int* u = v;
 
 	for (i = 0; i < iteration; i += step) {
@@ -134,31 +136,69 @@ void rambw_read_test(int iteration, data_t ccnt_overhead) {
 			u[15840] + u[15856] + u[15872] + u[15888] + u[15904] + u[15920] + u[15936] + u[15952] + u[15968] + u[15984];
 
 		t1 = ccnt_read();
+		
+		//printf("MEM\t%d\t%d\t%d\n", t1-t0, sizeof(int)*SIZE, STRIDE);
 		n += step;
-		sum_t += (t1 - t0 - ccnt_overhead);
+		float temp = (t1 - t0 - ccnt_overhead); 
+		sum_t += temp;
 		u += 15984 + 16;
 
-		if (u >= &v[SIZE - 15984]) {
+		if (u >= &v[SIZE - 15984])
 			u = v;
+	
+		if(temp < 0) printf("negative!");
+
+		result[cnt++] = temp;
+
+		if(min > temp) {
+			min = temp;
+		} 	
+
+		if(max < temp) {
+			max = temp;
 		}
 	}
+
+	for(int i = 0; i < cnt ; ++i) {
+		for(int j = i; j < cnt ; ++j) {
+			if(result[i] > result[j]) {
+				float temp = result[i];
+				result[i] = result[j];
+				result[j] = temp;	
+			}
+		}
+
+		std += pow((result[i] - mean), 2);
+	}
+
+	median = result[cnt/2];
+	mean = (sum_t/cnt);
+	std /= (cnt);	
+	
+	printf("mean : %f \n", mean);
+	printf("median : %f \n", median);
+	printf("max : %f \n", max);
+	printf("min : %f \n", min);
+	printf("std : %f \n", sqrt(std));
 
 	printf("BW_RD_AVG\t%d(MB/S)\t%d\t%d\n", (int)((n * sizeof(int) ) / ((0.00000000142*(float)sum_t*1024*1024))), sizeof(int)*SIZE, STRIDE);
 
 	free(v);
 }
 
+
 void rambw_write_test(int iteration, data_t overhead) {
 	const int SIZE = 10*1024*1024;
 	const int STRIDE = 4096;
+	float mean = 0, std = 0, min = 99999999, max = 0, median = 0;
+	float result[iteration/1000];	
 
 	// Set up array
 	int* v = (int*)malloc(sizeof(int)*SIZE);
-	int i;
+	int i, cnt = 0;
 	for (i = STRIDE; i < SIZE; i += STRIDE) {
 		v[i] = (int)&v[i-STRIDE];
 	}
-
 	v[0] = (int)&v[i-STRIDE];
 
 	// Warmup
@@ -175,7 +215,6 @@ void rambw_write_test(int iteration, data_t overhead) {
 	const int step = 1000;
 	int* u = v;
 
-	long long tt0, tt1, sum_tt;
 
 	for (i = 0; i < iteration; i += step) {
 		t0 = ccnt_read();
@@ -283,15 +322,51 @@ void rambw_write_test(int iteration, data_t overhead) {
 
 		t1 = ccnt_read();
 
-		n += step;
-		sum_t += (t1 - t0 - overhead);
+		float temp = (t1 - t0 - overhead); 
+		sum_t += temp;
 		u += 15984 + 16;
+		n += step;		
 
-		if (u >= &v[SIZE - 15984]) {
+		if (u >= &v[SIZE - 15984])
 			u = v;
-		}
+	
+		if(temp < 0) printf("negative!");
+
+		result[cnt++] = temp;
+
+		if(min > temp) {
+			min = temp;
+		} 	
+
+		if(max < temp) {
+			max = temp;
+		}	
 	}
 
+	for(int i = 0; i < cnt ; ++i) {
+		for(int j = i; j < cnt ; ++j) {
+			if(result[i] > result[j]) {
+				float temp = result[i];
+				result[i] = result[j];
+				result[j] = temp;	
+			}
+		}
+
+		std += pow((result[i] - mean), 2);
+	}
+
+	median = result[cnt/2];
+	mean = (sum_t/cnt);
+	std /= (cnt);	
+	
+	printf("mean : %f \n", mean);
+	printf("median : %f \n", median);
+	printf("max : %f \n", max);
+	printf("min : %f \n", min);
+	printf("std : %f \n", sqrt(std));
+
+
+	//printf("%d, %d, %lld\n", (int)sum_t, (int)(sum_t / 1188000), sum_tt);
 	printf("BW_WT_AVG\t%d(MB/S)\t%d\t%d\n", (int)((n * sizeof(int)) / (0.00000000143*sum_t*1024*1024)), sizeof(int)*SIZE, STRIDE);
 
 	free(v);
