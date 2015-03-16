@@ -65,6 +65,11 @@ data_t readtime(data_t ccnt_overhead, unsigned int size, bool random_read, bool 
 		ssize_t s = 0;
 		int count = 0;
 
+		system("echo 3 > /proc/sys/vm/drop_caches\n");
+		if(remote_read)
+		{
+			system("umount ./remote_test_files > tmp && mount -t nfs 76.167.145.48:/remote ./remote_test_files > tmp\n");
+		}
 		if((fd = open(filename, O_SYNC)) == -1 ) {
 			printf("%s: Open error\n", filename);
 			
@@ -125,6 +130,8 @@ data_t readtime(data_t ccnt_overhead, unsigned int size, bool random_read, bool 
 		if(accum < min) { 
 			min = accum; 
 		}
+
+		close(fd);
 	}
 
 	if(retry_count > 0) {
@@ -132,13 +139,13 @@ data_t readtime(data_t ccnt_overhead, unsigned int size, bool random_read, bool 
 	}
 
 	stddev = sqrt(stddev/i);
-	
-	printf("Average: %f\tMax: %f\tMin: %f\tStd. Dev: %f\tTrial Count: %d\n", avg, max, min, stddev, i);
+
+	printf("Average: %.3f\tMax: %.3f\tMin: %.3f\tStd. Dev: %.3f\tTrial Count: %d\n",
+			avg, max, min, stddev, i);
 	unsigned int block_count = size / BLOCK_SIZE;
 
-	printf("Per Block\tAverage: %f\tMax: %f\tMin: %f\tStd. Dev: %f\tTrial Count: %d\n", avg/block_count, max/block_count, min/block_count, stddev/block_count, i);
-
-	close(fd);
+	printf("Per Block\tAverage: %.3f\tMax: %.3f\tMin: %.3f\tStd. Dev: %.3f\tTrial Count: %d\n",
+			avg/block_count, max/block_count, min/block_count, stddev/block_count, i);
 
 	return avg;
 }
