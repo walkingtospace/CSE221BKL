@@ -70,9 +70,9 @@ data_t readtime(data_t ccnt_overhead, unsigned int size, bool random_read, bool 
 		{
 			system("umount ./remote_test_files > tmp && mount -t nfs 76.167.145.48:/remote ./remote_test_files > tmp\n");
 		}
-		if((fd = open(filename, O_SYNC)) == -1 ) {
+		if((fd = open(filename, O_SYNC|O_DIRECT)) == -1 ) 
 			printf("%s: Open error\n", filename);
-			
+			printf("%s\n", strerror(errno));
 			exit(1);
 		}
 	
@@ -84,7 +84,7 @@ data_t readtime(data_t ccnt_overhead, unsigned int size, bool random_read, bool 
 				
 				if(lseek(fd, offset * BLOCK_SIZE * 1024, SEEK_SET) == -1) {
 					printf("Seek error\n");
-					
+					printf("%s\n", strerror(errno));
 					exit(1);
 				}
 			}
@@ -94,6 +94,7 @@ data_t readtime(data_t ccnt_overhead, unsigned int size, bool random_read, bool 
 			
 			if(s == -1) {
 				printf("Read error\n");
+				printf("%s\n", strerror(errno));
 				exit(1);
 			}
 
